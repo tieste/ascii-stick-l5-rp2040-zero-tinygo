@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"machine"
 	"time"
 )
@@ -19,6 +20,12 @@ func main() {
 	button5.Configure(machine.PinConfig{Mode: machine.PinInputPullup})
 	button6 := machine.D26
 	button6.Configure(machine.PinConfig{Mode: machine.PinInputPullup})
+
+	machine.InitADC()
+	analogX := machine.ADC{Pin: machine.D28}
+	analogX.Configure(machine.ADCConfig{})
+	analogY := machine.ADC{Pin: machine.D27}
+	analogY.Configure(machine.ADCConfig{})
 
 	for {
 		if !button1.Get() {
@@ -40,6 +47,10 @@ func main() {
 			println("button b is pressed!!")
 		}
 
-		time.Sleep(time.Millisecond * 100)
+		x := analogX.Get()
+		y := analogY.Get()
+		fmt.Printf("%04X %04X\n", x, y)
+
+		time.Sleep(time.Millisecond * 1000)
 	}
 }
