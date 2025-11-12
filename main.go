@@ -1,10 +1,24 @@
 package main
 
 import (
-	"fmt"
 	"machine"
+	"machine/usb/hid/joystick"
 	"time"
 )
+
+var def = joystick.Definitions{
+	ReportID:     1,
+	ButtonCnt:    4,
+	HatSwitchCnt: 1,
+	AxisDefs: []joystick.Constraint{
+		{MinIn: -32767, MaxIn: 32767, MinOut: -32767, MaxOut: 32767},
+		{MinIn: -32767, MaxIn: 32767, MinOut: -32767, MaxOut: 32767},
+	},
+}
+
+// var js = joystick.UseSettings(def, nil, nil, nil)
+
+var js = joystick.Port()
 
 func main() {
 
@@ -29,28 +43,42 @@ func main() {
 
 	for {
 		if !button1.Get() {
-			println("button up is pressed!!")
+			// println("button up is pressed!!")
+			js.SetHat(0, joystick.HatUp)
 		}
 		if !button2.Get() {
-			println("button left is pressed!!")
+			// println("button left is pressed!!")
+			js.SetHat(0, joystick.HatLeft)
 		}
 		if !button3.Get() {
-			println("button right is pressed!!")
+			// println("button right is pressed!!")
+			js.SetHat(0, joystick.HatRight)
 		}
 		if !button4.Get() {
-			println("button down is pressed!!")
+			// println("button down is pressed!!")
+			js.SetHat(0, joystick.HatDown)
 		}
 		if !button5.Get() {
-			println("button a is pressed!!")
+			// println("button a is pressed!!")
+			js.SetButton(0, true)
+		} else {
+			js.SetButton(0, false)
 		}
 		if !button6.Get() {
-			println("button b is pressed!!")
+			// println("button b is pressed!!")
+			js.SetButton(1, true)
+		} else {
+			js.SetButton(1, false)
 		}
 
 		x := analogX.Get()
 		y := analogY.Get()
-		fmt.Printf("%04X %04X\n", x, y)
+		// fmt.Printf("%04X %04X\n", x, y)
+		js.SetAxis(0, int(x))
+		js.SetAxis(1, int(y))
 
-		time.Sleep(time.Millisecond * 1000)
+		js.SendState()
+
+		time.Sleep(time.Millisecond * 100)
 	}
 }
