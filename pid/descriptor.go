@@ -4,7 +4,7 @@ import (
 	"machine/usb/descriptor"
 )
 
-var hidDescriptor = descriptor.Append([][]byte{
+var HidDescriptor = descriptor.Append([][]byte{
 	descriptor.HIDUsagePageGenericDesktop,
 	descriptor.HIDUsageDesktopJoystick,
 	descriptor.HIDCollectionApplication,
