@@ -1,6 +1,7 @@
 package main
 
 import (
+	// "fmt"
 	"machine"
 	"machine/usb/hid/joystick"
 	"time"
@@ -17,8 +18,10 @@ func init() {
 			ButtonCnt:    4,
 			HatSwitchCnt: 1,
 			AxisDefs: []joystick.Constraint{
-				{MinIn: -32767, MaxIn: 32767, MinOut: -32767, MaxOut: 32767}, // X
-				{MinIn: -32767, MaxIn: 32767, MinOut: -32767, MaxOut: 32767}, // Y
+				// {MinIn: -32767, MaxIn: 32767, MinOut: -32767, MaxOut: 32767}, // X
+				// {MinIn: -32767, MaxIn: 32767, MinOut: -32767, MaxOut: 32767}, // Y
+				{MinIn: -21000, MaxIn: 21000, MinOut: -21000, MaxOut: 21000}, // X
+				{MinIn: -29000, MaxIn: 29000, MinOut: -29000, MaxOut: 29000}, // Y
 			},
 		},
 		nil,
@@ -31,40 +34,29 @@ func init() {
 }
 
 func main() {
-	if js == nil {
-		panic("Failed to configure joystick")
-	}
-	hat1 := machine.D3
+	hat1 := machine.D2
 	hat1.Configure(machine.PinConfig{Mode: machine.PinInputPullup})
-	// hat1.Configure(machine.PinConfig{Mode: machine.PinInput})
 
 	hat2 := machine.D4
 	hat2.Configure(machine.PinConfig{Mode: machine.PinInputPullup})
-	// hat2.Configure(machine.PinConfig{Mode: machine.PinInput})
 
 	hat3 := machine.D5
 	hat3.Configure(machine.PinConfig{Mode: machine.PinInputPullup})
-	// hat3.Configure(machine.PinConfig{Mode: machine.PinInput})
 
 	hat4 := machine.D6
 	hat4.Configure(machine.PinConfig{Mode: machine.PinInputPullup})
-	// hat4.Configure(machine.PinConfig{Mode: machine.PinInput})
 
 	button1 := machine.D7
-	// button1.Configure(machine.PinConfig{Mode: machine.PinInputPullup})
-	button1.Configure(machine.PinConfig{Mode: machine.PinInput})
+	button1.Configure(machine.PinConfig{Mode: machine.PinInputPullup})
 
 	button2 := machine.D8
-	// button2.Configure(machine.PinConfig{Mode: machine.PinInputPullup})
-	button2.Configure(machine.PinConfig{Mode: machine.PinInput})
+	button2.Configure(machine.PinConfig{Mode: machine.PinInputPullup})
 
 	button3 := machine.D9
-	// button3.Configure(machine.PinConfig{Mode: machine.PinInputPullup})
-	button3.Configure(machine.PinConfig{Mode: machine.PinInput})
+	button3.Configure(machine.PinConfig{Mode: machine.PinInputPullup})
 
-	button4 := machine.D10
-	// button4.Configure(machine.PinConfig{Mode: machine.PinInputPullup})
-	button4.Configure(machine.PinConfig{Mode: machine.PinInput})
+	button4 := machine.D11
+	button4.Configure(machine.PinConfig{Mode: machine.PinInputPullup})
 
 	machine.InitADC()
 	analogX := machine.ADC{Pin: machine.D27}
@@ -73,6 +65,11 @@ func main() {
 	analogY.Configure(machine.ADCConfig{})
 
 	ticker := time.NewTicker(100 * time.Millisecond)
+
+	// minX := 0
+	// maxX := 0
+	// minY := 0
+	// maxY := 0
 
 	for range ticker.C {
 		if !hat1.Get() {
@@ -93,9 +90,29 @@ func main() {
 		js.SetButton(3, !button4.Get())
 
 		x := analogX.Get()
-		js.SetAxis(0, int(x)-32767)
+		tmpX := int(x) - 32767 - 15000
+		js.SetAxis(0, tmpX)
+
 		y := analogY.Get()
-		js.SetAxis(1, 32767-int(y))
+		tmpY := 32767 - int(y) + 4600
+		js.SetAxis(1, tmpY)
+
+		// if minX > tmpX {
+		// 	minX = tmpX
+		// }
+		// if maxX < tmpX {
+		// 	maxX = tmpX
+		// }
+		// if minY > tmpY {
+		// 	minY = tmpY
+		// }
+		// if maxY < tmpY {
+		// 	maxY = tmpY
+		// }
+		// centerX := (minX + maxX) / 2
+		// centerY := (minY + maxY) / 2
+
+		// fmt.Printf("%d %d %d %d : %d %d\n", minX, maxX, minY, maxY, centerX, centerY)
 
 		js.SendState()
 	}
