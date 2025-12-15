@@ -8,7 +8,7 @@ tinygo flash --target waveshare-rp2040-zero --size short ./main.go
 
 # 概要
 
-アスキースティックL5に PS Vita 用のアナログスティックを追加する改造を施したものを、RP2040-Zeroで動かすためのTinyGoプログラムです。
+アスキースティックL5にPSP用のアナログスティックを追加する改造を施したものを、RP2040-Zeroで動かすためのTinyGoプログラムです。
 
 ## 諸元
 
@@ -17,4 +17,5 @@ tinygo flash --target waveshare-rp2040-zero --size short ./main.go
 | ボタン             | A, B, START, SELECT |
 | ハットスイッチ     | 1式                 |
 | アナログスティック | X軸, Y軸            |
+
 
